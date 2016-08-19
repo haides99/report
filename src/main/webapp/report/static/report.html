@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<style>
+.fileRow:hover {
+	background-color: Beige;
+}
+</style>
+</head>
+<body>
+	<div id="files"></div>
+	<form id="uploadForm" method="post" enctype="multipart/form-data"
+		style="display: none;">
+		<input type="file" name="file" /> <input type="submit" value="Submit" />
+	</form>
+	<br />
+	<label for="reportId">edit:</label>
+	<input id="reportId" type="text" />
+	<button id="edit">edit</button>
+	<button id="delete">delete</button>
+	<button id="create">create</button>
+</body>
+<script type="text/javascript" src="lib/jquery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript" src="config.js"></script>
+<script type="text/javascript" src="report.js"></script>
+</html>

@@ -1,0 +1,47 @@
+{
+	"name": "aaw_report",
+	"description": "这是描述",
+	"type": 1,
+	"sqlText": "select ID, NAME_T, PRICE_T, CREATE_TIME from TEST_TABLE where ID > :id and NAME_T LIKE :namePrefix ",
+	"comments": "这是注释",
+	"reportColumns": [{
+		"name": "ID",
+		"description": "ID",
+		"type": 1,
+		"indexNo": 1
+	}, {
+		"name": "NAME_T",
+		"description": "名称",
+		"type": 2,
+		"indexNo": 2
+	}, {
+		"name": "PRICE_T",
+		"description": "价格",
+		"type": 3,
+		"indexNo": 3
+	}, {
+		"name": "CREATE_TIME",
+		"description": "创建时间",
+		"type": 4,
+		"indexNo": 4
+	}],
+	"reportParameters": [{
+		"name": "id",
+		"description": "ID",
+		"type": 1,
+		"indexNo": 1,
+		"defaultValue": "",
+		"listSqlText": "",
+		"listSqlDefault": "",
+		"multiSelection": 0,
+	}, {
+		"name": "namePrefix",
+		"description": "名称",
+		"type": 2,
+		"indexNo": 1,
+		"defaultValue": "",
+		"listSqlText": "",
+		"listSqlDefault": "",
+		"multiSelection": 0,
+	}]
+}
