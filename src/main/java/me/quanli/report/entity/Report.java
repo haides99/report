@@ -63,7 +63,7 @@ public class Report {
         this.description = description;
     }
 
-    @Column(name = "Sql_Text")
+    @Column(name = "SqlText")
     public String getSqlText() {
         return sqlText;
     }

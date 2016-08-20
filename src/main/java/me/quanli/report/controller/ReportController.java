@@ -11,11 +11,13 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import me.quanli.commons.table.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
@@ -42,6 +44,15 @@ public class ReportController extends CustomizedRestController {
 
     @Resource
     private ExecuteService executeService;
+
+    @Resource
+    private ReportPageQuery reportPageQuery;
+
+    @RequestMapping("/reportPageQuery")
+    @ResponseBody
+    public Object orderPageQuery(HttpServletRequest request) {
+        return reportPageQuery.queryPage(getParams(request), reportDao);
+    }
 
     @RequestMapping(value = "/report", method = RequestMethod.POST)
     public Report createReport(String reportJson) {
@@ -82,21 +93,20 @@ public class ReportController extends CustomizedRestController {
     }
 
     @RequestMapping("/fetchReportInPage")
-    public PageData<Report> fetchReportInPage(Integer pageNo, Integer pageSize) {
-        List<Report> data = reportService.fetchReport((pageNo - 1) * pageSize, pageSize);
-        Integer tatalCount = reportService.getReportCount();
+    public PageData<Report> fetchReportInPage(Long offset, Long limit) {
+        List<Report> data = reportService.fetchReport(offset, limit);
+        Long tatalCount = reportService.getReportCount();
 
         PageData<Report> result = new PageData<Report>();
         result.setTotal(tatalCount);
         result.setData(data);
-        result.setPageNo(pageNo);
-        result.setPageSize(pageSize);
+        result.setOffset(offset);
+        result.setLimit(limit);
         return result;
     }
 
     @RequestMapping("/getExecutionResultInPage")
-    public PageData<Map<String, Object>> getExecutionResultInPage(Integer reportId, String params, Integer pageNo,
-            Integer pageSize) throws IOException {
+    public PageData<Map<String, Object>> getExecutionResultInPage(Integer reportId, String params, Long offset, Long limit) throws IOException {
         Report report = reportDao.get(Report.class, reportId);
         if (report == null) {
             throw new RuntimeException("report not found");
@@ -104,24 +114,24 @@ public class ReportController extends CustomizedRestController {
         JSONObject requestParams = JSON.parseObject(params);
 
         List<Map<String, Object>> allData = executeService.executeReport(report, requestParams);
-        Integer fromIndex = (pageNo - 1) * pageSize;
-        Integer toIndex = fromIndex + pageSize;
+        Long fromIndex = offset;
+        Long toIndex = offset + limit;
         fromIndex = fromIndex > allData.size() ? allData.size() : fromIndex;
         toIndex = toIndex > allData.size() ? allData.size() : toIndex;
 
-        List<Map<String, Object>> data = allData.subList(fromIndex, toIndex);
+        List<Map<String, Object>> data = allData.subList(fromIndex.intValue(), toIndex.intValue());
 
         PageData<Map<String, Object>> result = new PageData<Map<String, Object>>();
-        result.setTotal(allData.size());
+        result.setTotal(new Long(allData.size()));
         result.setData(data);
-        result.setPageNo(pageNo);
-        result.setPageSize(pageSize);
+        result.setOffset(offset);
+        result.setLimit(limit);
         return result;
     }
 
     /**
      * download report result in xlsx format
-     * 
+     *
      * @param reportId
      * @param params
      * @param request
@@ -130,7 +140,7 @@ public class ReportController extends CustomizedRestController {
      */
     @RequestMapping("/downloadExecutionResultInXlsx")
     public void downloadExecutionResultInXlsx(Integer reportId, String params, HttpServletRequest request,
-            HttpServletResponse response) throws IOException {
+                                              HttpServletResponse response) throws IOException {
         Report report = reportDao.get(Report.class, reportId);
         if (report == null) {
             throw new RuntimeException("report not found");

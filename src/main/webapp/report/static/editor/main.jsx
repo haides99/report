@@ -396,9 +396,10 @@
         },
         
         parseParameters: function(sql) {
+            sql = sql.replace(/\\./g, '').replace(/".*?"/g, '').replace(/'.*?'/g, '');
             var parameterNames = [];
             var regexp = /:([0-9A-Za-z_]+)([^0-9A-Za-z_])/g;
-            while(true) {
+            while (true) {
                 var result = regexp.exec(sql);
                 if (!result) {
                     break;

@@ -2,9 +2,11 @@ package me.quanli.report.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
@@ -35,6 +37,20 @@ public class CustomizedRestController {
             params = formParameters.toSingleValueMap();
         } catch (HttpMessageNotReadableException | IOException e) {
             LOGGER.error(e, e);
+        }
+        return params;
+    }
+
+    public static Map<String, String> getParams(ServletRequest request) {
+        Map<String, String> params = new HashMap<String, String>();
+        if (request == null) {
+            return params;
+        }
+        Enumeration<String> paramNames = request.getParameterNames();
+        while (paramNames.hasMoreElements()) {
+            String paramName = paramNames.nextElement();
+            String paramValue = request.getParameter(paramName);
+            params.put(paramName, paramValue);
         }
         return params;
     }

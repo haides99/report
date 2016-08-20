@@ -11,7 +11,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
-@Table(name = "Report_Parameter")
+@Table(name = "ReportParameter")
 public class ReportParameter {
 
     public static final Integer TYPE_INTEGER = 1;
@@ -59,7 +59,7 @@ public class ReportParameter {
         this.id = id;
     }
 
-    @Column(name = "Report_Id")
+    @Column(name = "ReportId")
     public Integer getReportId() {
         return reportId;
     }
@@ -86,7 +86,7 @@ public class ReportParameter {
         this.description = description;
     }
 
-    @Column(name = "Index_No")
+    @Column(name = "IndexNo")
     public Integer getIndexNo() {
         return indexNo;
     }
@@ -104,7 +104,7 @@ public class ReportParameter {
         this.type = type;
     }
 
-    @Column(name = "Default_Value")
+    @Column(name = "DefaultValue")
     public String getDefaultValue() {
         return defaultValue;
     }
@@ -113,7 +113,7 @@ public class ReportParameter {
         this.defaultValue = defaultValue;
     }
 
-    @Column(name = "List_Sql_Text")
+    @Column(name = "ListSqlText")
     public String getListSqlText() {
         return listSqlText;
     }
@@ -122,7 +122,7 @@ public class ReportParameter {
         this.listSqlText = listSqlText;
     }
 
-    @Column(name = "List_Sql_Default")
+    @Column(name = "ListSqlDefault")
     public String getListSqlDefault() {
         return listSqlDefault;
     }
@@ -131,7 +131,7 @@ public class ReportParameter {
         this.listSqlDefault = listSqlDefault;
     }
 
-    @Column(name = "Multi_Selection")
+    @Column(name = "MultiSelection")
     public Integer getMultiSelection() {
         return multiSelection;
     }

@@ -99,17 +99,17 @@ public class ReportService {
         });
     }
 
-    public Integer getReportCount() {
+    public Long getReportCount() {
         BigInteger count = reportDao.findSingleBySQL("select count(*) from Report");
-        return count.intValue();
+        return count.longValue();
     }
 
     public List<Report> fetchReport() {
         return reportDao.find("from Report ");
     }
 
-    public List<Report> fetchReport(Integer offset, Integer limit) {
-        return reportDao.findWithLimit("from Report ", offset, limit);
+    public List<Report> fetchReport(Long offset, Long limit) {
+        return reportDao.findWithLimit("from Report ", offset.intValue(), limit.intValue());
     }
 
     public List<ReportColumn> fetchReportColumns(Integer reportId) {

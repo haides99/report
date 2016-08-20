@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "Report_Column")
+@Table(name = "ReportColumn")
 public class ReportColumn {
 
     public static final Integer TYPE_INTEGER = 1;
@@ -60,7 +60,7 @@ public class ReportColumn {
         this.id = id;
     }
 
-    @Column(name = "Report_Id")
+    @Column(name = "ReportId")
     public Integer getReportId() {
         return reportId;
     }
@@ -87,7 +87,7 @@ public class ReportColumn {
         this.description = description;
     }
 
-    @Column(name = "Index_No")
+    @Column(name = "IndexNo")
     public Integer getIndexNo() {
         return indexNo;
     }
@@ -105,7 +105,7 @@ public class ReportColumn {
         this.type = type;
     }
 
-    @Column(name = "Float_Precision")
+    @Column(name = "FloatPrecision")
     public Integer getFloatPrecision() {
         return floatPrecision;
     }

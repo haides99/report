@@ -78,12 +78,12 @@ public class GetAliasesVisitor implements ExpressionVisitor, SelectVisitor, Sele
 
     @Override
     public void visit(AllColumns allColumns) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("select * not supported yet.");
     }
 
     @Override
     public void visit(AllTableColumns allTableColumns) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("select *.* Not supported yet.");
     }
 
     @Override
