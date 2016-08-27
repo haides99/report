@@ -23,8 +23,10 @@ public abstract class PageQuery {
     /**
      * 对于全表排序，获取带有排序的查询语句
      *
-     * @param ql     原查询语句
-     * @param params 前端由datatable产生的参数
+     * @param ql
+     *            原查询语句
+     * @param params
+     *            前端由datatable产生的参数
      * @return
      */
     public String toSortQL(String ql, Map<String, String> params) {
@@ -66,8 +68,10 @@ public abstract class PageQuery {
     /**
      * 分页排序，对部分数据进行排序
      *
-     * @param aaData 要返回前端的数据
-     * @param params 前端由datatable产生的参数
+     * @param aaData
+     *            要返回前端的数据
+     * @param params
+     *            前端由datatable产生的参数
      */
     public void sort(List<List<Object>> aaData, Map<String, String> params) {
         String sortCol = params.get("iSortCol_0");
@@ -109,8 +113,7 @@ public abstract class PageQuery {
         });
     }
 
-    public Map<String, Object> queryPage(Map<String, String> params,
-                                         Dao dao) {
+    public Map<String, Object> queryPage(Map<String, String> params, Dao dao) {
         Map<String, Object> result = new HashMap<String, Object>();
         PageData<Object> pageData = new PageData<Object>(0, 20);
         String iDisplayStart = params.get("iDisplayStart");
@@ -130,7 +133,8 @@ public abstract class PageQuery {
         hql = toSortQL(hql, params);
 
         pageData.setTotal(dao.findCount(hql, paramValues.toArray()));
-        pageData.setData(dao.find(hql, paramValues.toArray()));
+        pageData.setData(dao.findWithLimit(hql, pageData.getOffset().intValue(),
+                pageData.getLimit().intValue(), paramValues.toArray()));
 
         int sEcho = Integer.parseInt(params.get("sEcho"));
         result.put("sEcho", sEcho + 1);
@@ -141,7 +145,7 @@ public abstract class PageQuery {
     }
 
     public Map<String, Object> queryPageBySQL(Map<String, String> params,
-                                              Dao dao) {
+            Dao dao) {
         Map<String, Object> result = new HashMap<String, Object>();
         PageData<Object> pageData = new PageData<Object>();
         String iDisplayStart = params.get("iDisplayStart");
@@ -161,7 +165,9 @@ public abstract class PageQuery {
         sql = toSortQL(sql, params);
 
         pageData.setTotal(dao.findCountBySQL(sql, paramValues.toArray()));
-        pageData.setData(dao.findBySQL(sql, paramValues.toArray()));
+        pageData.setData(
+                dao.findBySQLWithLimit(sql, pageData.getOffset().intValue(),
+                        pageData.getLimit().intValue(), paramValues.toArray()));
 
         int sEcho = Integer.parseInt(params.get("sEcho"));
         result.put("sEcho", sEcho + 1);
@@ -183,6 +189,6 @@ public abstract class PageQuery {
     }
 
     protected abstract String buildQuery(Map<String, String> params,
-                                         List<Object> paramValues);
+            List<Object> paramValues);
 
 }

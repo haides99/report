@@ -61,7 +61,7 @@ var columns = [{
     width: "15%"
 }, {
     title: "注释",
-    name: "comment",
+    name: "comments",
     className: "cell-left",
     width: "35%"
 }, {
