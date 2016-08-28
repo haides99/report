@@ -84,21 +84,23 @@
         reorder: function (dir, e) {
             e.stopPropagation();
             this.props.changeTableState({
-                orderColumn: this.props.index,
+                orderColumn: dir == 'none' ? null : this.props.index,
                 orderDir: dir
             });
         },
         render: function () {
             var getStyle = function (dir) {
                 return {
-                    color: this.props.ordering && this.props.orderDir === dir ? 'black' : 'gray'
+                    color: this.props.ordering && this.props.orderDir === dir ? 'black' : '#ccc'
                 }
             }.bind(this);
             var buttons = this.props.column.sortable === false ? '' :
                 [<button key={0} onClick={this.reorder.bind(this, 'asc')}
-                         style={getStyle("asc")}>升序</button>,
+                         style={getStyle("asc")}>↑</button>,
                     <button key={1} onClick={this.reorder.bind(this, 'desc')}
-                            style={getStyle("desc")}>降序</button>];
+                            style={getStyle("desc")}>↓</button>,
+                        <button key={2} onClick={this.reorder.bind(this, 'none')}
+                            	style={getStyle("none")}>∅</button>];
             return <th>
                 {this.props.column.title}
                 {buttons}

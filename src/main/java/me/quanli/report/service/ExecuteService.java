@@ -15,15 +15,12 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
-import me.quanli.commons.dao.Dao.Tx;
 import me.quanli.report.dao.ReportDao;
 import me.quanli.report.dao.TargetDao;
 import me.quanli.report.entity.Report;
-import me.quanli.report.entity.ReportColumn;
 import me.quanli.report.entity.ReportParameter;
 
 @Service
@@ -34,38 +31,6 @@ public class ExecuteService {
 
     @Resource
     private TargetDao targetDao;
-
-    @Deprecated
-    public void loadData(final String json) {
-        final JSONObject object = JSON.parseObject(json);
-        String reportName = object.getString("name");
-        List<Report> existed = reportDao.find("from Report where name = ?", reportName);
-        if (existed.size() > 0) {
-            throw new RuntimeException("report '" + reportName + "' already exists");
-        }
-        reportDao.doInTx(new Tx() {
-            @Override
-            public void exec() {
-                Report report = JSON.parseObject(json, Report.class);
-                report.setId(null);
-                reportDao.save(report);
-                JSONArray columns = object.getJSONArray("reportColumns");
-                for (int i = 0; i < columns.size(); i++) {
-                    ReportColumn column = columns.getObject(i, ReportColumn.class);
-                    column.setId(null);
-                    column.setReportId(report.getId());
-                    reportDao.save(column);
-                }
-                JSONArray parameters = object.getJSONArray("reportParameters");
-                for (int i = 0; i < parameters.size(); i++) {
-                    ReportParameter parameter = parameters.getObject(i, ReportParameter.class);
-                    parameter.setId(null);
-                    parameter.setReportId(report.getId());
-                    reportDao.save(parameter);
-                }
-            }
-        });
-    }
 
     public List<Map<String, Object>> executeReport(Report report, JSONObject requestParams, Integer offset,
             Integer limit) {
