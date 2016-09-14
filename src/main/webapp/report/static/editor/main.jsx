@@ -289,6 +289,25 @@
         
     });
     
+    var SendingEditor = React.createClass({
+        
+        getInitialState: function() {
+            return {
+                reportSend: this.props.reportSend || {},
+                emailAddresses: this.props.emailAddresses || [],
+            };
+        },
+        
+        render: function() {
+            console.log(this.props.display)
+            if (!this.props.display) {
+                return null;
+            }
+            return <p>aaaaa</p>
+        },
+        
+    });
+    
     var Editor = React.createClass({
         
         getInitialState: function() {
@@ -422,7 +441,7 @@
             };
             var activeStyle = $.extend(true, {}, liStyle, {borderBottom: "1px solid white", border: "1px solid black", cursor: "default", zIndex: 3});
             
-            var lis = ["Report", "Columns", "Parameters"].map(function(item, i) {
+            var lis = ["Report", "Columns", "Parameters", "Sending"].map(function(item, i) {
                 return <li key={i} 
                     onClick={this.changeTab.bind(this, item)} 
                     style={this.state.activeTab == item ? activeStyle : liStyle}>
@@ -456,6 +475,7 @@
                             <ReportEditor ref="reportEditor" display={this.state.activeTab == "Report"} report={this.props.report}/>
                             <ColumnEditor ref="columnEditor" display={this.state.activeTab == "Columns"} columns={this.props.columns}/>
                             <ParameterEditor ref="parameterEditor" display={this.state.activeTab == "Parameters"} parameters={this.props.parameters}/>
+                            <SendingEditor ref="sendingEditor" display={this.state.activeTab == "Sending"} parameters={this.props.sendingSettings}/>
                         </div>
                     </fieldset>
                     {buttons}
@@ -500,6 +520,7 @@
         var report;
         var columns = [];
         var parameters = [];
+        var sendingConfig = {};
         
         var reportLoaded = $.ajax({
             url: window.config.root + "/report/report/" + reportId,
@@ -531,11 +552,21 @@
             parameters = data;
         });
         
-        $.when(reportLoaded, columnLoaded, parameterLoaded).then(function() {
+        var sendingConfigLoaded = $.ajax({
+            url: window.config.root + "/report/report/" + reportId + "/sendingConfig",
+            method: "GET",
+            cache: false,
+            async: true,
+        }).done(function(data) {
+            console.log(data);
+            sendingConfig = data;
+        });
+        
+        $.when(reportLoaded, columnLoaded, parameterLoaded, sendingConfigLoaded).then(function() {
             window.showMessage = window.showMessage || alert;
             window.showButtons = window.showButtons === void 0;
             window.editor = ReactDOM.render(
-                <Editor report={report} columns={columns} parameters={parameters} showButtons={window.showButtons} />,
+                <Editor report={report} columns={columns} parameters={parameters} sendingConfig={sendingConfig} showButtons={window.showButtons} />,
                 document.getElementById("editorContainer")
             );
         });
