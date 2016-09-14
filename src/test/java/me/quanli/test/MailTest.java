@@ -3,6 +3,7 @@ package me.quanli.test;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -15,6 +16,7 @@ import me.quanli.commons.mail.MailSenderConfig;
 public class MailTest {
 
     @Test
+    @Ignore
     public void test() {
         MailSenderConfig config = new MailSenderConfig();
         MailSender sender = new MailSender(config);
