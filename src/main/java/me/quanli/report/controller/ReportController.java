@@ -85,12 +85,12 @@ public class ReportController extends CustomizedRestController {
 
     @RequestMapping(value = "/report/createAll", method = RequestMethod.POST)
     public Integer createAll(String reportJson, String columnArrJson,
-            String parameterArrJson) {
+            String parameterArrJson, String sendingConfigJson) {
         return reportService.createAll(reportJson, columnArrJson,
-                parameterArrJson);
+                parameterArrJson, sendingConfigJson);
     }
 
-    @RequestMapping(value = "/report/{reportId}/updateAll", method = RequestMethod.PUT)
+    @RequestMapping(value = "/report/{reportId}/updateAll", method = RequestMethod.POST)
     public void updateAll(@PathVariable Integer reportId,
             HttpServletRequest request) {
         Map<String, String> params = readForm(request);

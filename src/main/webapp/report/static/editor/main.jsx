@@ -294,7 +294,14 @@
         getInitialState: function() {
             return {
                 sendingConfig: {
-                    reportSend: this.props.sendingConfig.reportSend || {},
+                    reportSend: this.props.sendingConfig.reportSend || {
+                        emailHost: "",
+                        emailPort: "",
+                        emailUser: "",
+                        emailPassword: "",
+                        emailProtocol: "",
+                        emailUseSSL: 0,
+                    },
                     emailAddresses: this.props.sendingConfig.emailAddresses || [],
                 },
             };
@@ -463,7 +470,7 @@
             if (this.state.reportId) {
                 $.ajax({
                     url: window.config.root + "/report/report/" + this.state.reportId + "/updateAll",
-                    method: "PUT",
+                    method: "POST",
                     async: true,
                     data: {
                         reportJson: JSON.stringify(reportData),
@@ -487,6 +494,7 @@
                         reportJson: JSON.stringify(reportData),
                         columnArrJson: JSON.stringify(columns),
                         parameterArrJson: JSON.stringify(parameters),
+                        sendingConfigJson: JSON.stringify(sendingConfig),
                     },
                 }).then(function(data) {
                     console.log(data)
@@ -622,7 +630,7 @@
         window.showMessage = window.showMessage || alert;
         window.showButtons = window.showButtons === void 0;
         window.editor = ReactDOM.render(
-            <Editor report={{}} columns={[]} parameters={[]} showButtons={window.showButtons} />,
+            <Editor report={{}} columns={[]} parameters={[]} sendingConfig={{}} showButtons={window.showButtons} />,
             document.getElementById("editorContainer")
         );
     } else {

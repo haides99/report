@@ -36,7 +36,7 @@
 		class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
 
 	<mvc:cors>
-		<mvc:mapping path="/**" allowed-methods="GET, POST, PUT, DELETE"
+		<mvc:mapping path="/**" allowed-methods="GET, POST, PUT, DELETE, OPTIONS"
 			max-age="300" />
 	</mvc:cors>
 

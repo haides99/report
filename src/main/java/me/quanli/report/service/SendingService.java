@@ -42,6 +42,9 @@ public class SendingService {
         final ReportSend reportSend = sendingConfig.getReportSend();
         reportSend.setReportId(reportId);
         reportSend.setId(null);
+        if (reportSend.getEmailActive() == null) {
+            reportSend.setEmailActive(1);
+        }
         for (EmailAddress emailAddress : sendingConfig.getEmailAddresses()) {
             emailAddress.setReportId(reportId);
             emailAddress.setId(null);

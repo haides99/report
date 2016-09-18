@@ -78,7 +78,8 @@ public class ReportService {
     }
 
     public Integer createAll(final String reportJson,
-            final String columnArrJson, final String parameterArrJson) {
+            final String columnArrJson, final String parameterArrJson,
+            final String sendingConfigJson) {
         final List<Integer> id = new ArrayList<Integer>();
         reportDao.doInTx(new Tx() {
             @Override
@@ -88,6 +89,8 @@ public class ReportService {
                         columnArrJson);
                 parameterService.updateReportParameters(report.getId(),
                         parameterArrJson);
+                sendingService.updateSendingConfig(report.getId(),
+                        sendingConfigJson);
                 id.add(report.getId());
             }
         });
