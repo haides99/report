@@ -4,10 +4,11 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
+
+import me.quanli.commons.dao.Dao.Tx;
 import me.quanli.report.dao.ReportDao;
 import me.quanli.report.entity.EmailAddress;
 import me.quanli.report.entity.ReportSend;
@@ -15,8 +16,6 @@ import me.quanli.report.entity.dto.SendingConfig;
 
 @Service
 public class SendingService {
-
-    private static final Log LOGGER = LogFactory.getLog(SendingService.class);
 
     @Resource
     private ReportDao reportDao;
@@ -35,9 +34,34 @@ public class SendingService {
 
         return sendingConfig;
     }
-    
-    public void updateSendingConfig(final Integer reportId, String sendingConfigJson) {
-        
+
+    public void updateSendingConfig(final Integer reportId,
+            String sendingConfigJson) {
+        final SendingConfig sendingConfig = JSON.parseObject(sendingConfigJson,
+                SendingConfig.class);
+        final ReportSend reportSend = sendingConfig.getReportSend();
+        reportSend.setReportId(reportId);
+        reportSend.setId(null);
+        for (EmailAddress emailAddress : sendingConfig.getEmailAddresses()) {
+            emailAddress.setReportId(reportId);
+            emailAddress.setId(null);
+        }
+        reportDao.doInTx(new Tx() {
+            @Override
+            public void exec() {
+                reportDao.bulkUpdate(
+                        "delete from ReportSend where reportId = ? ", reportId);
+                reportDao.save(reportSend);
+
+                reportDao.bulkUpdate(
+                        "delete from EmailAddress where reportId = ? ",
+                        reportId);
+                for (EmailAddress emailAddress : sendingConfig
+                        .getEmailAddresses()) {
+                    reportDao.save(emailAddress);
+                }
+            }
+        });
     }
 
 }

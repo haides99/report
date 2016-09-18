@@ -95,7 +95,8 @@ public class ReportController extends CustomizedRestController {
             HttpServletRequest request) {
         Map<String, String> params = readForm(request);
         reportService.updateAll(reportId, params.get("reportJson"),
-                params.get("columnArrJson"), params.get("parameterArrJson"));
+                params.get("columnArrJson"), params.get("parameterArrJson"),
+                params.get("sendingConfigJson"));
     }
 
     @RequestMapping(value = "/analyseSql", method = RequestMethod.POST)

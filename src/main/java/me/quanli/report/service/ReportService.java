@@ -29,6 +29,9 @@ public class ReportService {
     @Resource
     private ParameterService parameterService;
 
+    @Resource
+    private SendingService sendingService;
+
     public Report createReport(String reportJson) {
         Report report = JSON.parseObject(reportJson, Report.class);
         reportDao.save(report);
@@ -48,7 +51,8 @@ public class ReportService {
         Report report = reportDao.get(Report.class, reportId);
         Report newReport = JSON.parseObject(reportJson, Report.class);
 
-        if (newReport.getId() != null && !Objects.equals(newReport.getId(), reportId)) {
+        if (newReport.getId() != null
+                && !Objects.equals(newReport.getId(), reportId)) {
             throw new RuntimeException("reportId does not match");
         }
         if (newReport.getName() != null) {
@@ -73,34 +77,41 @@ public class ReportService {
         return report;
     }
 
-    public Integer createAll(final String reportJson, final String columnArrJson, final String parameterArrJson) {
+    public Integer createAll(final String reportJson,
+            final String columnArrJson, final String parameterArrJson) {
         final List<Integer> id = new ArrayList<Integer>();
         reportDao.doInTx(new Tx() {
             @Override
             public void exec() {
                 Report report = createReport(reportJson);
-                columnService.updateReportColumns(report.getId(), columnArrJson);
-                parameterService.updateReportParameters(report.getId(), parameterArrJson);
+                columnService.updateReportColumns(report.getId(),
+                        columnArrJson);
+                parameterService.updateReportParameters(report.getId(),
+                        parameterArrJson);
                 id.add(report.getId());
             }
         });
         return id.get(0);
     }
 
-    public void updateAll(final Integer reportId, final String reportJson, final String columnArrJson,
-            final String parameterArrJson) {
+    public void updateAll(final Integer reportId, final String reportJson,
+            final String columnArrJson, final String parameterArrJson,
+            final String sendingConfigJson) {
         reportDao.doInTx(new Tx() {
             @Override
             public void exec() {
                 updateReport(reportId, reportJson);
                 columnService.updateReportColumns(reportId, columnArrJson);
-                parameterService.updateReportParameters(reportId, parameterArrJson);
+                parameterService.updateReportParameters(reportId,
+                        parameterArrJson);
+                sendingService.updateSendingConfig(reportId, sendingConfigJson);
             }
         });
     }
 
     public Long getReportCount() {
-        BigInteger count = reportDao.findSingleBySQL("select count(*) from Report");
+        BigInteger count = reportDao
+                .findSingleBySQL("select count(*) from Report");
         return count.longValue();
     }
 
@@ -109,7 +120,8 @@ public class ReportService {
     }
 
     public List<Report> fetchReport(Long offset, Long limit) {
-        return reportDao.findWithLimit("from Report ", offset.intValue(), limit.intValue());
+        return reportDao.findWithLimit("from Report ", offset.intValue(),
+                limit.intValue());
     }
 
     public List<ReportColumn> fetchReportColumns(Integer reportId) {

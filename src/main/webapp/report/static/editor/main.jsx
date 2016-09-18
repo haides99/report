@@ -293,17 +293,123 @@
         
         getInitialState: function() {
             return {
-                reportSend: this.props.reportSend || {},
-                emailAddresses: this.props.emailAddresses || [],
+                sendingConfig: {
+                    reportSend: this.props.sendingConfig.reportSend || {},
+                    emailAddresses: this.props.sendingConfig.emailAddresses || [],
+                },
             };
         },
         
+        updateReportSendField: function(fieldName, refName, e) {
+            var state = $.extend(true, {}, this.state);
+            state.sendingConfig.reportSend[fieldName] = this.refs[refName].value;
+            this.setState(state);
+        },
+        
+        addRecipient: function() {
+            var recipient = prompt("please input recipient email address");
+            if (!recipient) {
+                alert("input is empty");
+                return;
+            }
+            var exists = this.state.sendingConfig.emailAddresses.some(function(item, i) {
+                return item.emailAddress == recipient;
+            }) > 0;
+            if (exists) {
+                alert("this recipient already exists");
+                return;
+            }
+            var state = $.extend(true, {}, this.state);
+            state.sendingConfig.emailAddresses.push({emailAddress: recipient});
+            this.setState(state);
+        },
+        
+        removeRecipient: function(recipient) {
+            var state = $.extend(true, {}, this.state);
+            state.sendingConfig.emailAddresses = state.sendingConfig.emailAddresses.filter(function(item, i) {
+                return item.emailAddress != recipient;
+            });
+            this.setState(state);
+        },
+        
         render: function() {
-            console.log(this.props.display)
             if (!this.props.display) {
                 return null;
             }
-            return <p>aaaaa</p>
+            var trs = this.state.sendingConfig.emailAddresses.map(function(item, i) {
+                return <tr key={i}>
+                    <td style={{paddingLeft: "10px"}}>{item.emailAddress}</td>
+                    <td style={{textAlign: "center"}}><button onClick={this.removeRecipient.bind(this, item.emailAddress)}>remove</button></td>
+                </tr>
+            }.bind(this));
+            var labelStype = {
+                width: "150px",
+                display: "inline-block",
+                textAlign: "right",
+            };
+            return <div>
+                <div>
+                    <label style={labelStype}>Email Host:</label>
+                    <input type="text" 
+                        ref="emailHostInput" 
+                        onChange={this.updateReportSendField.bind(this, "emailHost", "emailHostInput")} 
+                        value={this.state.sendingConfig.reportSend.emailHost} 
+                        style={{width: "200px"}} />
+                </div>
+                <div>
+                    <label style={labelStype}>Email Port:</label>
+                    <input type="text" 
+                        ref="emailPortInput" 
+                        onChange={this.updateReportSendField.bind(this, "emailPort", "emailPortInput")} 
+                        value={this.state.sendingConfig.reportSend.emailPort} 
+                        style={{width: "200px"}} />
+                </div>
+                <div>
+                    <label style={labelStype}>Email User:</label>
+                    <input type="text" 
+                        ref="emailUserInput" 
+                        onChange={this.updateReportSendField.bind(this, "emailUser", "emailUserInput")} 
+                        value={this.state.sendingConfig.reportSend.emailUser} 
+                        style={{width: "200px"}} />
+                </div>
+                <div>
+                    <label style={labelStype}>Email Password:</label>
+                    <input type="text" 
+                        ref="emailPasswordInput" 
+                        onChange={this.updateReportSendField.bind(this, "emailPassword", "emailPasswordInput")} 
+                        value={this.state.sendingConfig.reportSend.emailPassword} 
+                        style={{width: "200px"}} />
+                </div>
+                <div>
+                    <label style={labelStype}>Email Protocol:</label>
+                    <input type="text" 
+                        ref="emailProtocolInput" 
+                        onChange={this.updateReportSendField.bind(this, "emailProtocol", "emailProtocolInput")} 
+                        value={this.state.sendingConfig.reportSend.emailProtocol} 
+                        style={{width: "200px"}} />
+                </div>
+                <div>
+                    <label style={labelStype}>Email Use SSL:</label>
+                    <select type="text" 
+                        ref="emailUseSSLInput" 
+                        onChange={this.updateReportSendField.bind(this, "emailUseSSL", "emailUseSSLInput")} 
+                        value={this.state.sendingConfig.reportSend.emailUseSSL} 
+                        style={{width: "204px"}} >
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
+                <hr />
+                <div style={{margin: "10px"}}>
+                    <button onClick={this.addRecipient}>Add Recipient</button>
+                    <table>
+                        <thead>
+                            <tr><th style={{width: "200px"}}>email address</th><th>operation</th></tr>
+                        </thead>
+                        <tbody>{trs}</tbody>
+                    </table>
+                </div>
+            </div>
         },
         
     });
@@ -317,6 +423,7 @@
                 sqlText: this.props.report.sqlText || "",
                 columns: [],
                 parameters: [],
+                sendingConfig: {},
             };
         },
         
@@ -352,6 +459,7 @@
             // TODO add validate
             var columns = this.refs.columnEditor.state.columns;
             var parameters = this.refs.parameterEditor.state.parameters;
+            var sendingConfig = this.refs.sendingEditor.state.sendingConfig;
             if (this.state.reportId) {
                 $.ajax({
                     url: window.config.root + "/report/report/" + this.state.reportId + "/updateAll",
@@ -361,6 +469,7 @@
                         reportJson: JSON.stringify(reportData),
                         columnArrJson: JSON.stringify(columns),
                         parameterArrJson: JSON.stringify(parameters),
+                        sendingConfigJson: JSON.stringify(sendingConfig),
                     },
                 }).then(function(data) {
                     console.log(data)
@@ -475,7 +584,7 @@
                             <ReportEditor ref="reportEditor" display={this.state.activeTab == "Report"} report={this.props.report}/>
                             <ColumnEditor ref="columnEditor" display={this.state.activeTab == "Columns"} columns={this.props.columns}/>
                             <ParameterEditor ref="parameterEditor" display={this.state.activeTab == "Parameters"} parameters={this.props.parameters}/>
-                            <SendingEditor ref="sendingEditor" display={this.state.activeTab == "Sending"} parameters={this.props.sendingSettings}/>
+                            <SendingEditor ref="sendingEditor" display={this.state.activeTab == "Sending"} sendingConfig={this.props.sendingConfig}/>
                         </div>
                     </fieldset>
                     {buttons}
