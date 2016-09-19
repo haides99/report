@@ -261,7 +261,7 @@ public class ReportController extends CustomizedRestController {
             throw new RuntimeException("cannot find send config");
         }
         List<EmailAddress> emailAddresses = reportDao
-                .find("from SendEmail where reportId = ? ", report.getId());
+                .find("from EmailAddress where reportId = ? ", report.getId());
 
         MailSenderConfig config = new MailSenderConfig();
         config.setHost(reportSend.getEmailHost());
